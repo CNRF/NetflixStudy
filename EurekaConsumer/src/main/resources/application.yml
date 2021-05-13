@@ -1,0 +1,26 @@
+server:
+  port: 9000
+
+eureka:
+  client:
+    service-url:
+      #配置注册地址
+      defaultZone: http://localhost:7900/eureka/
+    registry-fetch-interval-seconds: 30
+    enabled: true
+  instance:
+    lease-renewal-interval-in-seconds: 30
+
+spring:
+  application:
+    name: api-consumer
+logging:
+  level:
+    root: info
+
+api-provider:
+  ribbon:
+    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+feign:
+  hystrix:
+    enabled: true

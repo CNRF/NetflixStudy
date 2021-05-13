@@ -1,0 +1,94 @@
+spring:
+  application:
+    name: cloud-eureka
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080
+eureka:
+  instance:
+    prefer-ip-address: false
+  client:
+  #    #配置禁止自己当做服务注册
+  #    register-with-eureka: true
+  #    fetch-registry: true
+  server:
+    # 自我保护看自己情况
+    enable-self-preservation: true
+    # 续约阈值，和自我保护相关
+    renewal-percent-threshold: 0.85
+    # server剔除过期服务的时间间隔
+    eviction-interval-timer-in-ms: 1000
+    # 是否开启readOnly读缓存
+    use-read-only-response-cache: true
+    # 关闭 readOnly
+    response-cache-update-interval-ms: 1000
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+  endpoint:
+    health:
+      show-details: always
+---
+#单点
+spring:
+  profiles:
+    active: 7900
+server:
+  port: 7900
+eureka:
+  client:
+    #配置是否将自已注册到EurekaServer
+    register-with-eureka: false
+    #是否从EurekaServer获取注册信息，单点无所谓，集群设置为true，配合Ribbon使用负载均衡
+    fetch-registry: true
+    service-url:
+      #集群大于3个官方建议最好要配置上所有eureka的地址（最好是打乱顺序，服务会默认注册到第一个配置ip上）
+      defaultZone: http://localhost:7900/eureka/
+#三个集群（类似于三个配置文件）
+
+---
+spring:
+  profiles: 7901
+server:
+  port: 7901
+eureka:
+  instance:
+    #单个机器需要配置host文件
+    hostname: eureka-7901
+  client:
+    #配置是否将自已注册到EurekaServer
+    register-with-eureka: true
+    #是否从EurekaServer获取注册信息，单点无所谓，集群设置为true，配合Ribbon使用负载均衡
+    fetch-registry: true
+    service-url:
+      #集群大于3个官方建议最好要配置上所有eureka的地址（最好是打乱顺序，服务会默认注册到第一个配置ip上）
+      defaultZone: http://eureka-7901:7901/eureka/,http://eureka-7902:7902/eureka/,http://eureka-7903:7903/eureka/
+---
+spring:
+  profiles: 7902
+server:
+  port: 7902
+eureka:
+  instance:
+    hostname: eureka-7902
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-7901:7901/eureka/,http://eureka-7902:7902/eureka/,http://eureka-7903:7903/eureka/
+---
+spring:
+  profiles: 7903
+server:
+  port: 7903
+eureka:
+  instance:
+    hostname: eureka-7903
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-7901:7901/eureka/,http://eureka-7902:7902/eureka/,http://eureka-7903:7903/eureka/

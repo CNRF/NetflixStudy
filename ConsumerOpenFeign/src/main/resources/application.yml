@@ -1,0 +1,43 @@
+server:
+  port: 9800
+
+eureka:
+  client:
+    service-url:
+      #配置注册地址
+      defaultZone: http://localhost:7900/eureka/
+    registry-fetch-interval-seconds: 30
+    enabled: true
+  instance:
+    lease-renewal-interval-in-seconds: 30
+
+spring:
+  application:
+    name: api-consumer-feign
+  boot:
+    admin:
+      client:
+        url: http://localhost:8080
+  #zipkin
+  zipkin:
+    base-url: http://localhost:9411/
+    #采样比例1
+  sleuth:
+    sampler:
+      rate: 1
+
+logging:
+  level:
+    root: info
+ribbon:
+  eureka:
+    enabled: true
+# 文本没有提示，但是配置是生效
+  ReadTimeout: 1000 #连接超时时间(ms)
+  ConnectTimeout: 6000 #业务逻辑超时时间(ms)
+  MaxAutoRetries: 1 #同一台实例最大重试次数,不包括首次调用
+  MaxAutoRetriesNextServer: 1 #重试负载均衡其他的实例最大重试次数,不包括首次调用
+  OkToRetryOnAllOperations: false  #是否所有操作都重试
+feign:
+  hystrix:
+    enabled: true
